@@ -1,13 +1,17 @@
+'use client';
+
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Form, Input, Button, Typography, message, Spin } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
-import { mockLogin } from '@/utils/auth'; // ใช้ mockLogin หรือใส่ logic ของคุณเอง
+import { mockLogin } from '@/utils/auth'; 
 
 const { Link } = Typography;
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState('');
+  const router = useRouter();
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -17,7 +21,7 @@ export default function LoginForm() {
     if (success) {
       setPasswordMessage('Password correct');
       message.success('Login successful!');
-      // TODO: Redirect to dashboard
+      router.push('/dashboard');
     } else {
       setPasswordMessage('Password incorrect');
       message.error('Incorrect credentials');
@@ -29,6 +33,7 @@ export default function LoginForm() {
       layout="vertical"
       onFinish={onFinish}
       requiredMark={false}
+      className="login-form" 
     >
       <Form.Item
         label="Email"
@@ -113,7 +118,7 @@ export default function LoginForm() {
         }
 
         .ant-btn-primary:hover {
-          background-color:rgb(0, 248, 12);
+          background-color: rgb(0, 248, 12);
           border-color: #45a049;
         }
       `}</style>

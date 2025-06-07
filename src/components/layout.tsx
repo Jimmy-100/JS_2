@@ -1,66 +1,92 @@
-import React, { ReactNode } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button, Drawer } from 'antd';
+import {
+  MenuOutlined,
+  AppstoreOutlined,
+  ToolOutlined,
+  UserOutlined,
+  HomeOutlined,
+} from '@ant-design/icons';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Content, Footer } = Layout;
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const menuItems = [
+    { label: ' Home', path: '/', icon: <HomeOutlined /> },
+    { label: ' Product List', path: '/prods', icon: <AppstoreOutlined /> },
+    { label: ' Manage Products', path: '/mprods', icon: <ToolOutlined /> },
+    { label: ' Users', path: '/musers', icon: <UserOutlined /> },
+  ];
+
+  const handleNavigate = (path: string) => {
+    setOpen(false);
+    setTimeout(() => router.push(path), 200);
+  };
+
   return (
-    <Layout>
-      {/* Header */}
-      <Header
-        style={{
-          height: 70,
-          backgroundColor: '#001529',
+    <Layout style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
+      <Header style={{
+        background: '#001529',
+        padding: '0 16px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <Button
+          type="text"
+          icon={<MenuOutlined style={{ color: '#fff', fontSize: 20 }} />}
+          onClick={() => setOpen(true)}
+        />
+        <h2 style={{
           color: 'white',
-          display: 'flex',
-          alignItems: 'center',
-          paddingLeft: 20,
-          fontSize: 20,
-        }}
-      >
-        My App
+          marginLeft: 16,
+          fontSize: '20px',
+          fontWeight: 600,
+          fontFamily: 'Segoe UI, sans-serif',
+        }}>
+          Grilled Fish Shop 🐟🔥
+        </h2>
       </Header>
 
-      <Layout>
-        {/* Sider */}
-        <Sider
-          width={200}
-          style={{
-            backgroundColor: '#fff',
-            minHeight: 'calc(100vh - 70px)',
-            borderRight: '1px solid #f0f0f0',
-          }}
-        >
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['1']}
-            style={{ height: '100%', borderRight: 0 }}
-            items={[
-              { key: '1', label: 'Home' },
-              { key: '2', label: 'Profile' },
-              { key: '3', label: 'Settings' },
-            ]}
-          />
-        </Sider>
+      <Drawer
+        title={<span style={{ fontWeight: 600 }}>📋 Navigation Menu</span>}
+        placement="left"
+        closable
+        onClose={() => setOpen(false)}
+        open={open}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Menu mode="vertical" selectable={false} style={{ borderRight: 0 }}>
+          {menuItems.map((item, i) => (
+            <Menu.Item
+              key={i}
+              icon={item.icon}
+              style={{ fontWeight: 500 }}
+              onClick={() => handleNavigate(item.path)}
+            >
+              {item.label}
+            </Menu.Item>
+          ))}
+        </Menu>
+      </Drawer>
 
-        {/* Content */}
-        <Content
-          style={{
-            margin: '10px 20px 0 10px',
-            padding: 20,
-            background: '#f5f5f5',
-            minHeight: 'calc(100vh - 70px - 20px)',
-          }}
-        >
-          {children}
-        </Content>
-      </Layout>
+      <Content style={{ padding: '24px 16px', background: '#fff' }}>
+        {children}
+      </Content>
+
+      <Footer style={{
+        textAlign: 'center',
+        background: '#f0f2f5',
+        fontWeight: 500,
+        padding: '12px 16px',
+        borderTop: '1px solid #e0e0e0',
+      }}>
+        © {new Date().getFullYear()} Grilled Fish Shop by Jimmy 🐠
+      </Footer>
     </Layout>
   );
-};
-
-export default AppLayout;
+}

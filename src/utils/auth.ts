@@ -1,7 +1,10 @@
-export const mockLogin = async (email: string, password: string): Promise<boolean> => {
-  // จำลองดีเลย์
-  await new Promise((res) => setTimeout(res, 1000));
+export async function mockLogin(email: string, password: string): Promise<boolean> {
+  const validEmail = 'jimmy@email.com';
+  const validPassword = 'jim100909';
 
-  // ตรวจสอบค่า email และ password
-  return email === 'jimmy@email.com' && password === 'jim100909';
-};
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(email === validEmail && password === validPassword);
+    }, 800);
+  });
+}

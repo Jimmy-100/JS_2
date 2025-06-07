@@ -10,9 +10,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // ตรวจสอบข้อมูลแบบง่าย
     if (username.trim() && password.trim()) {
-      router.push('/page'); // ไปหน้า Home
+      router.push('/');
     }
   };
 
@@ -52,6 +51,7 @@ export default function LoginPage() {
         <Input.Password
           placeholder="Password"
           value={password}
+          
           onChange={(e) => setPassword(e.target.value)}
           style={{ marginBottom: 20, borderRadius: 6 }}
         />
