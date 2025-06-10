@@ -1,45 +1,80 @@
-// pages/prods.tsx
-import { Card, Col, Row, Typography, Tag } from 'antd';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { Table, Typography, Tag } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import axios from 'axios';
 import AppLayout from '../components/layout';
-import { ShoppingCartOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 
+// สมมุติว่า API ส่งข้อมูลมาในรูปแบบนี้
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+}
+
 export default function ProdsPage() {
-    const fakeProducts = [
-        { id: 1, name: 'Min ', price: '550,000 Kip', description: 'Fresh and delicious grilled fish' },
-        { id: 2, name: 'Jenny Fish', price: '750,000 Kip', description: 'Soft texture with perfect seasoning' },
-    ];
+  const [data, setData] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    return (
-        <AppLayout>
-        <div style={{ marginBottom: 24 }}>
-            <Title level={2}>📦 Product List</Title>
-            <Paragraph type="secondary">Explore our top-quality grilled fish selections 🐟🔥</Paragraph>
-        </div>
+ useEffect(() => {
+  axios.get('http://localhost:3500/products')
+    .then(res => {
+      console.log('API Response:', res.data); // ✅ ตรงนี้จะช่วยมาก
+      setData(res.data); // เปลี่ยนชั่วคราวเพื่อดูผลลัพธ์
+    })
+    .catch(err => {
+      console.error('Error fetching data:', err);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, []);
 
-        <Row gutter={[24, 24]}>
-            {fakeProducts.map((p) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={p.id}>
-                <Card
-                hoverable
-                title={<span style={{ fontWeight: 600 }}>{p.name}</span>}
-                bordered={false}
-                actions={[<ShoppingCartOutlined key="buy" />]}
-                style={{
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    transition: '0.3s',
-                }}
-                >
-                <Paragraph>{p.description}</Paragraph>
-                <Tag color="green" style={{ fontSize: '16px', padding: '4px 12px' }}>
-                    {p.price}
-                </Tag>
-                </Card>
-            </Col>
-            ))}
-        </Row>
-        </AppLayout>
-    );
-    }
+  const columns: ColumnsType<Product> = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 80,
+    },
+    {
+      title: 'ຊື່ສິນຄ້າ',
+      dataIndex: 'pro_name',
+      key: 'pro_name',
+    },
+    {
+      title: 'ລາຄາ',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price) => <Tag color="green">{price.toLocaleString()} Kip</Tag>,
+    },
+    {
+      title: 'ລາຍລະອຽດ',
+      dataIndex: 'cat_id',
+      key: 'cat_id',
+    },
+  ];
+
+  return (
+    <AppLayout>
+      <div style={{ marginBottom: 24 }}>
+        <Title level={2}>📦 ລາຍການສິນຄ້າ</Title>
+        <Paragraph type="secondary">ສິນຄ້າຍ່າງຊັ້ນນຳໃຫ້ເລືອກ 🐟🔥</Paragraph>
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        loading={loading}
+        bordered
+        className="custom-table"
+        pagination={{ pageSize: 10 }}
+      />
+    </AppLayout>
+  );
+}
